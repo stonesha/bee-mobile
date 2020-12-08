@@ -1,0 +1,8 @@
+{
+  "name": "bee-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "id": "5d3852b2"
+}
