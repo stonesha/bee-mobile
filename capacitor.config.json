@@ -3,7 +3,7 @@
   "appName": "bee-mobile",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "build",
+  "webDir": "www",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
