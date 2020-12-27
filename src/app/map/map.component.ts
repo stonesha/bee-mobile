@@ -1,5 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
-const mapboxgl = require('mapbox-gl'); //for some reason only way to fix read only error of accessToken, I don't know why
+import { environment } from '../../environments/environment';
+import { Component, OnInit} from '@angular/core';
+import * as mapboxgl from 'mapbox-gl'; 
 
 @Component({
   selector: 'app-map',
@@ -18,8 +19,8 @@ export class MapComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    mapboxgl.accessToken= process.env.MAPBOX_ACCESS_TOKEN;
       this.map = new mapboxgl.Map({
+        accessToken: environment.mapbox.accessToken,
         container: 'map',
         style: this.style,
         zoom: 10,
