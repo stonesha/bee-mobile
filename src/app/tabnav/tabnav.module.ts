@@ -28,7 +28,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/tabs-nav/dashboard'
+    redirectTo: '/tab-nav/map'
   }
 ];
 

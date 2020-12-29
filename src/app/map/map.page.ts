@@ -17,6 +17,10 @@ export class MapPage implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  ionViewDidEnter() {
+    
     this.map = new mapboxgl.Map({
       accessToken: environment.mapbox.accessToken,
       container: 'map',
@@ -26,7 +30,6 @@ export class MapPage implements OnInit {
     });
 
     this.map.addControl(new mapboxgl.NavigationControl());
-
   }
 
 }
