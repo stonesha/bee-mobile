@@ -5,14 +5,6 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: './tabnav/tabnav.module#TabnavPageModule'
-  },
-  {
-    path: 'map',
-    loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
-  },
-  {
-    path: 'settings',
-    loadChildren: () => import('./settings/settings.module').then( m => m.SettingsPageModule)
   }
 ];
 
