@@ -1,6 +1,7 @@
 import { environment } from '../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 
 @Component({
   selector: 'app-map',
@@ -30,6 +31,15 @@ export class MapPage implements OnInit {
     });
 
     this.map.addControl(new mapboxgl.NavigationControl());
+
+    var directions = new MapboxDirections({
+      accessToken: environment.mapbox.accessToken
+    });
+
+    //considers congestion of traffic when calculating a route
+    directions.congestion = true;
+
+    this.map.addControl(directions, 'top-left');
   }
 
 }
