@@ -25,6 +25,7 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^5.0.0",
     "@mapbox/mapbox-gl-directions": "^4.1.0",
+    "@ngrx/store": "^10.1.2",
     "@types/mapbox-gl": "^2.0.0",
     "ini": "^1.3.6",
     "mapbox-gl": "^2.0.1",
