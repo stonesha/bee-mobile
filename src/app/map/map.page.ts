@@ -40,6 +40,10 @@ export class MapPage implements OnInit {
     directions.congestion = true;
 
     this.map.addControl(directions, 'top-left');
+
+    this.map.on('load', (event) => {
+      this.map.resize();
+    });
   }
 
 }
