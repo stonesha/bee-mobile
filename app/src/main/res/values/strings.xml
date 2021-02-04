@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">bee-mobile</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoic3RvbmVzaGEiLCJhIjoiY2tneXlmeHBwMGhwbzJwb3g2MjNiN3MyYSJ9.nhINfN-bW0q7OMoHHvibew</string>
+</resources>
