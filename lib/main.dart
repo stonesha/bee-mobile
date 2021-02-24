@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'BEE Mobile',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -26,7 +32,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'BEE Map'),
     );
   }
 }
