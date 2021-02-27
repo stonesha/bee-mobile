@@ -1,77 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:location/location.dart';
-
-Future<LatLng> acquireCurrentLocation() async {
-  //initilaizes plugin and starts listening for potential platform events
-  Location location = new Location();
-
-  //whether or not the locationservice is enabled
-  bool serviceEnabled;
-
-  //status of a permission request to use location services
-  PermissionStatus permissionGranted;
-
-  //check if the location service is enabled and if not request it
-  //if user refuses, return null
-  serviceEnabled = await location.serviceEnabled();
-  if (!serviceEnabled) {
-    serviceEnabled = await location.requestService();
-
-    if (!serviceEnabled) {
-      return null;
-    }
-  }
-
-  //check location permissions, similar in android apps
-  //check if permissions granted, if not first request,
-  //then read result, only proceed if permission is granted
-  permissionGranted = await location.hasPermission();
-  if (permissionGranted == PermissionStatus.denied) {
-    permissionGranted = await location.requestPermission();
-    if (permissionGranted != PermissionStatus.granted) {
-      return null;
-    }
-  }
-
-  final locationData = await location.getLocation();
-
-  return LatLng(locationData.latitude, locationData.longitude);
-}
+import 'utils/config.helper.dart';
+import 'utils/location.helper.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(App());
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BEE Mobile',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'BEE Map'),
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
     );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FutureBuilder(
+        future: loadConfigFile(),
+        builder: (
+          BuildContext buildContext,
+          AsyncSnapshot<dynamic> snapshot,
+        ) {
+          if (snapshot.hasData) {
+            return MapboxMap(
+              accessToken: snapshot.data['mapbox_api_token'],
+              initialCameraPosition: CameraPosition(
+                target: LatLng(39.52766, -119.81353),
+              ),
+              onMapCreated: (MapboxMapController controller) async {
+                //acquire current location (returns the LatLng Instance)
+                final location = await acquireCurrentLocation();
+
+                //either moveCamera or animateCamera, animateCamera is smoother doe
+                await controller.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      zoom: 15.0,
+                      target: location,
+                    ),
+                  ),
+                );
+
+                //add circle denoting user location
+                await controller.addCircle(CircleOptions(
+                  circleRadius: 8.0,
+                  circleColor: '#006992',
+                  circleOpacity: 0.8,
+                  geometry: location,
+                  draggable: false,
+                ));
+              },
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
+
+    // return Scaffold(
+    //   body: MapboxMap(
+    //     accessToken: token,
+    //     styleString: style,
+    //     initialCameraPosition: CameraPosition(
+    //       zoom: 15,
+    //       target: LatLng(39.52766, -119.81353),
+    //     ),
+
+    //     //onMapCreated callback should be used for everything related
+    //     //to update map components via the MapboxMapController instance
+    //     onMapCreated: (MapboxMapController controller) async {
+    //       //acquire current location (returns the LatLng Instance)
+    //       final result = await acquireCurrentLocation();
+
+    //       //either moveCamera or animateCamera, animateCamera is smoother doe
+    //       await controller.animateCamera(
+    //         CameraUpdate.newLatLng(result),
+    //       );
+
+    //       //add circle denoting user location
+    //       await controller.addCircle(CircleOptions(
+    //         circleRadius: 8.0,
+    //         circleColor: '#006992',
+    //         circleOpacity: 0.8,
+    //         geometry: result,
+    //         draggable: false,
+    //       ));
+    //     },
+    //   ),
+    // );
   }
 }
 
