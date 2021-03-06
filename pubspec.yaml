@@ -15,11 +15,9 @@ dependencies:
   
   mapbox_gl: ^0.10.0
   geolocator: ^6.2.1
-  animated_text_kit: ^3.1.2
-  google_fonts: ^1.1.2
-  font_awesome_flutter: ^8.11.0
-  bottom_navy_bar: ^5.6.0
   location: ^3.2.4
+  http: ^0.12.2
+  convex_bottom_bar: ^2.7.1
 
 
 dev_dependencies:
