@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Icon(Icons.navigation),
         backgroundColor: Color(0xFFE3B505),
         foregroundColor: Colors.white,
-        onPressed: _serviceWrapper.getData,
+        onPressed: _serviceWrapper.sendLocation,
       ),
       bottomNavigationBar: ConvexAppBar(
           items: [
