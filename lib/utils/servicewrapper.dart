@@ -30,10 +30,13 @@ class ServiceWrapper {
 
     print(response.body);
 
+    return response.body;
+    /*
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to get data');
     }
+    */
   }
 }

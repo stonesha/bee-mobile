@@ -1,11 +1,13 @@
 import 'package:bee_mobile/ui/screens/routes.modal.dart';
 import 'package:bee_mobile/ui/screens/settings.modal.dart';
+import 'package:bee_mobile/ui/screens/safety.modal.dart';
 import 'package:bee_mobile/utils/config.helper.dart';
 import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -64,6 +66,13 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text("BEE Mobile"),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () async {
+                showSettingsModal(context);
+              }),
+        ],
         flexibleSpace: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -82,14 +91,17 @@ class _HomeScreenState extends State<HomeScreen> {
           items: [
             TabItem(icon: Icons.directions, title: 'Routes'),
             TabItem(icon: Icons.map, title: 'Map'),
-            TabItem(icon: Icons.settings, title: 'Settings'),
+            TabItem(
+                icon: Icon(FontAwesomeIcons.firstAid, color: Colors.white),
+                title: 'Safety'),
           ],
           initialActiveIndex: 1, //optional, default as 0
           onTap: (int i) {
             if (i == 0) {
-              showRoutesModal(context);
+              showRoutesModal(context, _serviceWrapper);
+              i = 1;
             } else if (i == 2) {
-              showSettingsModal(context);
+              showSafetyModal(context, _serviceWrapper);
             }
           },
           gradient: LinearGradient(
