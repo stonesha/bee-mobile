@@ -1,4 +1,5 @@
-import 'package:bee_mobile/ui/screens/routes.screen.dart';
+import 'package:bee_mobile/ui/screens/routes.modal.dart';
+import 'package:bee_mobile/ui/screens/settings.modal.dart';
 import 'package:bee_mobile/utils/config.helper.dart';
 import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     colors: <Color>[Color(0xFF00AFB5), Color(0xFF102E4A)]))),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.navigation),
+        child: Icon(Icons.my_location),
         backgroundColor: Color(0xFFE3B505),
         foregroundColor: Colors.white,
         onPressed: _serviceWrapper.sendLocation,
@@ -87,6 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: (int i) {
             if (i == 0) {
               showRoutesModal(context);
+            } else if (i == 2) {
+              showSettingsModal(context);
             }
           },
           gradient: LinearGradient(
