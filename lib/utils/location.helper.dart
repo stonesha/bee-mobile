@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:location/location.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
@@ -17,10 +16,6 @@ Future<LatLng> acquireCurrentLocation() async {
   serviceEnabled = await location.serviceEnabled();
   if (!serviceEnabled) {
     serviceEnabled = await location.requestService();
-
-    if (!serviceEnabled) {
-      return null;
-    }
   }
 
   //check location permissions, similar in android apps
@@ -29,12 +24,9 @@ Future<LatLng> acquireCurrentLocation() async {
   permissionGranted = await location.hasPermission();
   if (permissionGranted == PermissionStatus.denied) {
     permissionGranted = await location.requestPermission();
-    if (permissionGranted != PermissionStatus.granted) {
-      return null;
-    }
   }
 
-  final locationData = await location.getLocation();
+  final LocationData locationData = await location.getLocation();
 
   return LatLng(locationData.latitude, locationData.longitude);
 }

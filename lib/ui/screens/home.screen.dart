@@ -1,3 +1,4 @@
+import 'package:bee_mobile/ui/screens/routes.screen.dart';
 import 'package:bee_mobile/utils/config.helper.dart';
 import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
@@ -76,13 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: _serviceWrapper.sendLocation,
       ),
       bottomNavigationBar: ConvexAppBar(
+          style: TabStyle.fixed,
           items: [
             TabItem(icon: Icons.directions, title: 'Routes'),
             TabItem(icon: Icons.map, title: 'Map'),
-            TabItem(icon: Icons.message, title: 'Chat'),
+            TabItem(icon: Icons.settings, title: 'Settings'),
           ],
           initialActiveIndex: 1, //optional, default as 0
-          onTap: (int i) => print('click index=$i'),
+          onTap: (int i) {
+            if (i == 0) {
+              showRoutesModal(context);
+            }
+          },
           gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
