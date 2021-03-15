@@ -1,9 +1,51 @@
 import 'dart:convert';
 import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:http/http.dart' as http;
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 class ServiceWrapper {
   var baseurl = "https://bee-webserver.herokuapp.com/";
+  var uuid = "608107e4-64bd-4843-af59-036646165689";
+
+  Future<http.Response> sendSafety(bool isSafe) async {
+    var location = await acquireCurrentLocation();
+    Map<String, dynamic> locationJSON = {
+      'latitude': location.latitude,
+      'longitude': location.longitude,
+      'safe': isSafe,
+    };
+
+    var response = await http.post(
+        Uri.encodeFull(baseurl + "Mark_Safe_M/" + uuid),
+        body: json.encode(locationJSON),
+        headers: {
+          "content-type": "application/json",
+          "Accept": "application/json"
+        });
+
+    print(response.body);
+
+    return response;
+  }
+
+  Future<http.Response> sendReport(LatLng coordinates) async {
+    Map<String, dynamic> locationJSON = {
+      'latitude': coordinates.latitude,
+      'longitude': coordinates.longitude
+    };
+
+    var response = await http.post(
+        Uri.encodeFull(baseurl + "/Input_Location_M"),
+        body: json.encode(locationJSON),
+        headers: {
+          "content-type": "application/json",
+          "Accept": "application/json"
+        });
+
+    print(response.body);
+
+    return response;
+  }
 
   Future<http.Response> sendLocation() async {
     var location = await acquireCurrentLocation();

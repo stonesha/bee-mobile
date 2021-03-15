@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bee_mobile/ui/screens/routes.modal.dart';
 import 'package:bee_mobile/ui/screens/settings.modal.dart';
 import 'package:bee_mobile/ui/screens/safety.modal.dart';
@@ -16,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _serviceWrapper = new ServiceWrapper();
+  MapboxMapController _mapController;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 target: LatLng(39.52766, -119.81353),
               ),
               onMapCreated: (MapboxMapController controller) async {
+                _mapController = controller;
                 //acquire current location (returns the LatLng Instance)
                 final location = await acquireCurrentLocation();
 
@@ -54,6 +58,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   geometry: location,
                   draggable: false,
                 ));
+              },
+              onMapLongClick: (Point<double> point, LatLng coordinates) async {
+                await _mapController.addSymbol(
+                  SymbolOptions(
+                    // You retrieve this value from the Mapbox Studio
+                    iconImage: 'road-closure',
+                    iconColor: '#006992',
+
+                    // YES, YOU STILL NEED TO PROVIDE A VALUE HERE!!!
+                    geometry: coordinates,
+                  ),
+                );
+                _serviceWrapper.sendReport(coordinates);
               },
             );
           } else {

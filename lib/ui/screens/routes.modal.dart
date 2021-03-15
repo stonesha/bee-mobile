@@ -7,6 +7,8 @@ void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper) {
     response = value;
   });
 
+  print(response);
+
   showModalBottomSheet(
       context: context,
       builder: (context) {

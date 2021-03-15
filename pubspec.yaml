@@ -20,6 +20,7 @@ dependencies:
   convex_bottom_bar: ^2.7.1
   font_awesome_flutter: ^8.11.0
   animated_text: ^1.0.2
+  rflutter_alert: ^1.0.2
 
 
 dev_dependencies:
