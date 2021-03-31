@@ -21,6 +21,7 @@ dependencies:
   font_awesome_flutter: ^8.11.0
   animated_text: ^1.0.2
   rflutter_alert: ^1.0.2
+  intl: ^0.17.0
 
 
 dev_dependencies:
@@ -32,3 +33,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/config.json
+    - assets/pin.png

@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
 
 void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper) {
-  var response;
-  serviceWrapper.getData().then((value) {
-    response = value;
-  });
-
-  print(response);
+  serviceWrapper.getData();
 
   showModalBottomSheet(
       context: context,

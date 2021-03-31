@@ -36,7 +36,7 @@ void showSafetyModal(
                                 BorderRadius.all(Radius.circular(16.0))),
                         onPressed: () {
                           print("green button pressed");
-                          serviceWrapper.sendSafety(true);
+                          serviceWrapper.sendSafety();
                         },
                         child: Text("I am safe."))),
                 // ignore: deprecated_member_use
@@ -52,7 +52,7 @@ void showSafetyModal(
                                 BorderRadius.all(Radius.circular(16.0))),
                         onPressed: () {
                           print("red button pressed");
-                          serviceWrapper.sendSafety(false);
+                          serviceWrapper.sendNotSafe();
                         },
                         child: Text("I am not safe."))),
               ],
