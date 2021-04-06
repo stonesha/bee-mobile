@@ -60,16 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ));
               },
               onMapLongClick: (Point<double> point, LatLng coordinates) async {
-                await _mapController.addSymbol(
-                  SymbolOptions(
-                    // You retrieve this value from the Mapbox Studio
-                    iconImage: 'road-closure',
-                    iconColor: '#006992',
-
-                    // YES, YOU STILL NEED TO PROVIDE A VALUE HERE!!!
-                    geometry: coordinates,
-                  ),
-                );
+                await _mapController.addCircle(CircleOptions(
+                  circleRadius: 8.0,
+                  circleColor: '#FF0000',
+                  circleOpacity: 0.8,
+                  geometry: coordinates,
+                  draggable: false,
+                ));
                 _serviceWrapper.sendReport(coordinates);
               },
             );
@@ -101,7 +98,17 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Icon(Icons.my_location),
         backgroundColor: Color(0xFFE3B505),
         foregroundColor: Colors.white,
-        onPressed: _serviceWrapper.sendLocation,
+        onPressed: () async {
+          _mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                zoom: 15.0,
+                target: await acquireCurrentLocation(),
+              ),
+            ),
+          );
+          _serviceWrapper.sendLocation();
+        },
       ),
       bottomNavigationBar: ConvexAppBar(
           style: TabStyle.fixed,
