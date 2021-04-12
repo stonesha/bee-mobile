@@ -56,7 +56,8 @@ class ServiceWrapper {
     var location = await acquireCurrentLocation();
     Map<String, dynamic> locationJSON = {
       'latitude': location.latitude,
-      'longitude': location.longitude
+      'longitude': location.longitude,
+      'user_id': uuid,
     };
 
     var response = await http.post(
