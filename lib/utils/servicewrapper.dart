@@ -5,7 +5,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 class ServiceWrapper {
   var baseurl = "https://bee-webserver.herokuapp.com";
-  var uuid = "608107e4-64bd-4843-af59-036646165689";
+  var uuid = "140afcc5-cc8a-453b-98fc-5c851aed4aef";
 
   Future<http.Response> sendSafety(bool isSafe) async {
     var location = await acquireCurrentLocation();
@@ -23,6 +23,7 @@ class ServiceWrapper {
           "Accept": "application/json"
         });
 
+    print(uuid);
     print(response.body);
 
     return response;
