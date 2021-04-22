@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
           initialActiveIndex: 1, //optional, default as 0
           onTap: (int i) {
             if (i == 0) {
-              showRoutesModal(context, _serviceWrapper);
+              showRoutesModal(context, _serviceWrapper, _mapController);
               i = 1;
             } else if (i == 2) {
               showSafetyModal(context, _serviceWrapper);
