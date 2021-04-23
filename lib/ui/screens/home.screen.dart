@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:bee_mobile/ui/screens/routes.modal.dart';
@@ -8,6 +9,7 @@ import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -58,6 +60,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   geometry: location,
                   draggable: false,
                 ));
+
+                String jsonString =
+                    await rootBundle.loadString('assets/test_polygon.json');
+                final data = json.decode(jsonString)['coordinates'];
+                List<LatLng> tempCoords = [];
+                List<List<LatLng>> coordinates = [];
+
+                for (int i = 0; i < data[0].length; i++) {
+                  tempCoords.add(LatLng(data[0][i][1], data[0][i][0]));
+                }
+
+                coordinates.add(tempCoords);
+                await controller.addFill(FillOptions(
+                    geometry: coordinates,
+                    draggable: false,
+                    fillColor: "#00FFFF",
+                    fillOpacity: 0.8,
+                    fillOutlineColor: "#000000"));
+
+                print(_mapController.fills);
               },
               onMapLongClick: (Point<double> point, LatLng coordinates) async {
                 await _mapController.addCircle(CircleOptions(

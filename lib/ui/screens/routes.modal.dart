@@ -29,7 +29,7 @@ void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper,
               List<LatLng> coordinates = [];
               for (var i = 0; i < data['coordinates'].length; i++) {
                 coordinates.add(LatLng(
-                    data['coordinates'][i][0], data['coordinates'][i][1]));
+                    data['coordinates'][i][1], data['coordinates'][i][0]));
               }
               var lineOptions = new LineOptions(
                   geometry: coordinates,
