@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mapbox_gl/mapbox_gl.dart';
 
 class BeeApi {
   final String baseURL;
