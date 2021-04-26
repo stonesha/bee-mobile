@@ -25,6 +25,7 @@ void showSettingsModal(BuildContext context, ServiceWrapper _serviceWrapper) {
                           ),
                           onSubmitted: (String value) async {
                             name = value;
+                            _serviceWrapper.updateName(name);
                           },
                         ),
                       ],
@@ -32,7 +33,6 @@ void showSettingsModal(BuildContext context, ServiceWrapper _serviceWrapper) {
                     buttons: [
                       DialogButton(
                         onPressed: () {
-                          _serviceWrapper.sendUser(name);
                           Navigator.pop(context);
                         },
                         child: Text(

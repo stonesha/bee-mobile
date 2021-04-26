@@ -9,7 +9,6 @@ import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -76,6 +75,37 @@ class _HomeScreenState extends State<HomeScreen> {
     ).show();
   }
 
+  _makeReportAlert(context, _serviceWrapper, coordinates) {
+    String info = "";
+    Alert(
+        context: context,
+        title: "Report Hazard",
+        content: Column(
+          children: <Widget>[
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Describe Hazard',
+              ),
+              onSubmitted: (String value) async {
+                info = value;
+                await _serviceWrapper.sendReport(coordinates, info);
+              },
+            ),
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "SEND",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          )
+        ]).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _mapController = controller;
                 //acquire current location (returns the LatLng Instance)
                 final location = await acquireCurrentLocation();
+                _serviceWrapper.sendUser();
 
                 //either moveCamera or animateCamera, animateCamera is smoother doe
                 await controller.animateCamera(
@@ -162,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   geometry: coordinates,
                   draggable: false,
                 ));
-                _serviceWrapper.sendReport(coordinates);
+                _makeReportAlert(context, _serviceWrapper, coordinates);
               },
             );
           } else {

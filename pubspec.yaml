@@ -22,6 +22,8 @@ dependencies:
   animated_text: ^1.0.2
   rflutter_alert: ^1.0.2
   flutter_mapbox_navigation: ^0.0.19
+  uuid: ^2.0.4
+  intl: ^0.15.8
 
 
 dev_dependencies:

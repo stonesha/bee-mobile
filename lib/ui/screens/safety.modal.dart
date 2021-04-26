@@ -78,7 +78,7 @@ void showSafetyModal(
                                 BorderRadius.all(Radius.circular(16.0))),
                         onPressed: () {
                           print("red button pressed");
-                          serviceWrapper.sendSafety(false);
+                          serviceWrapper.sendNotSafe(false);
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

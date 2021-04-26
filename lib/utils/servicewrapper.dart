@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class ServiceWrapper {
   var baseurl = "https://bee-webserver.herokuapp.com";
-  var uuid = "140afcc5-cc8a-453b-98fc-5c851aed4aea";
+  var uuid = Uuid().v4();
+  var datetime =
+      new DateFormat("yyyy-MM-dd hh:mm:ss").format(new DateTime.now()) + "+02";
 
   Future<http.Response> sendSafety(bool isSafe) async {
     var location = await acquireCurrentLocation();
@@ -29,11 +33,60 @@ class ServiceWrapper {
     return response;
   }
 
-  Future<http.Response> sendReport(LatLng coordinates) async {
+  Future<http.Response> sendNotSafe(bool isSafe) async {
+    var location = await acquireCurrentLocation();
     Map<String, dynamic> locationJSON = {
-      "reported_at": "2004-10-19 10:23:54+02",
+      'latitude': location.latitude,
+      'longitude': location.longitude,
+      'safe': isSafe,
+    };
+
+    var response = await http.post(
+        Uri.encodeFull(baseurl + "/Mark_Not_Safe_M/" + uuid),
+        body: json.encode(locationJSON),
+        headers: {
+          "content-type": "application/json",
+          "Accept": "application/json"
+        });
+
+    print(uuid);
+    print(response.body);
+
+    return response;
+  }
+
+  Future<http.Response> updateName(String name) async {
+    Map<String, dynamic> locationJSON = {
+      "user_id": uuid,
+      "evac_id": "Null",
+      "notification_token": "true",
+      "notification_sent_at": "null",
+      "acknowledged": "true",
+      "acknowledged_at": "null",
+      "safe": "false",
+      "marked_safe_at": "null",
+      "location": "null",
+      "location_updated_at": "null",
+      "name": name
+    };
+
+    var response = await http.post(Uri.encodeFull(baseurl + "/Update_Username"),
+        body: json.encode(locationJSON),
+        headers: {
+          "content-type": "application/json",
+          "Accept": "application/json"
+        });
+
+    print(response.body);
+
+    return response;
+  }
+
+  Future<http.Response> sendReport(LatLng coordinates, String info) async {
+    Map<String, dynamic> locationJSON = {
+      "reported_at": datetime,
       "type": "nasty",
-      "info": "its real bad out there man",
+      "info": info,
       "report_id": "NULL",
       "evac_id": "NULL",
       "reporter_id": "28549545-313a-43f1-a8c1-3e8fb1b88675",
@@ -82,20 +135,19 @@ class ServiceWrapper {
     return response.body;
   }
 
-  Future<String> sendUser(name) async {
-    var uuid = "140afcc5-cc8a-453b-98fc-5c851aed43ef";
+  Future<String> sendUser() async {
     Map<String, dynamic> locationJSON = {
       'user_id': uuid,
       'evac_id': 'null',
       'notification_token': false,
-      'notification_sent_at': '2021-04-26 10:23:54+02',
+      'notification_sent_at': datetime,
       'acknowledged': false,
-      'acknowledged_at': '2021-04-26 10:23:54+02',
+      'acknowledged_at': datetime,
       'safe': false,
-      'marked_safe_at': '2021-04-26 10:23:54+02',
+      'marked_safe_at': datetime,
       'location': 'null',
-      'location_updated_at': '2021-04-26 10:23:54+02',
-      'name': name
+      'location_updated_at': datetime,
+      'name': ''
     };
 
     var response = await http.post(
@@ -112,18 +164,17 @@ class ServiceWrapper {
   }
 
   Future<String> acknowledgeNotification() async {
-    var uuid = "140afcc5-cc8a-453b-98fc-5c851aed4aea";
     Map<String, dynamic> locationJSON = {
       'user_id': uuid,
       'evac_id': 'null',
       'notification_token': false,
-      'notification_sent_at': '2021-04-26 10:23:54+02',
+      'notification_sent_at': datetime,
       'acknowledged': false,
-      'acknowledged_at': '2021-04-26 10:23:54+02',
+      'acknowledged_at': datetime,
       'safe': false,
-      'marked_safe_at': '2021-04-26 10:23:54+02',
+      'marked_safe_at': datetime,
       'location': 'null',
-      'location_updated_at': '2021-04-26 10:23:54+02',
+      'location_updated_at': datetime,
       'name': 'null'
     };
 
