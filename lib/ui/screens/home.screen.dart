@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -21,6 +22,59 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _serviceWrapper = new ServiceWrapper();
   MapboxMapController _mapController;
+
+  _showEvacuationInstructions(context, _serviceWrapper) async {
+    var instructionsJson = await _serviceWrapper.getInstructions();
+    var instructions = json.decode(instructionsJson);
+
+    var instructionsTitle = instructions['severity'];
+    var type = instructions['type'];
+    var actualInstructions = instructions['instructions'];
+    var instructionsDesc =
+        "The type of emergency is a $type. $actualInstructions";
+
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: instructionsTitle,
+      desc: instructionsDesc,
+      buttons: [
+        DialogButton(
+          child: Text(
+            "UNDERSTOOD",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Color.fromRGBO(0, 179, 134, 1.0),
+        ),
+      ],
+    ).show();
+  }
+
+  _showEvacuationWarning(context, _serviceWrapper) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "EMERGENCY ALERT",
+      desc: "You are in an emergency zone and must evacuate.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "ACKNOWLEDGED",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            await _serviceWrapper.acknowledgeNotification();
+            Navigator.pop(context);
+            _showEvacuationInstructions(context, _serviceWrapper);
+          },
+          color: Color.fromRGBO(0, 179, 134, 1.0),
+        ),
+      ],
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,25 +115,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   draggable: false,
                 ));
 
-                String jsonString =
-                    await rootBundle.loadString('assets/test_polygon.json');
-                final data = json.decode(jsonString)['coordinates'];
-                List<LatLng> tempCoords = [];
-                List<List<LatLng>> coordinates = [];
+                var zonesJSON = await _serviceWrapper.getZones();
+                zonesJSON = zonesJSON.substring(1);
+                List<String> zones = zonesJSON.split(r"|");
+                double minLong = double.infinity;
+                double maxLong = double.negativeInfinity;
+                double minLat = double.infinity;
+                double maxLat = double.negativeInfinity;
+                for (int i = 0; i < zones.length; i++) {
+                  List<LatLng> tempCoords = [];
+                  List<List<LatLng>> coordinates = [];
+                  var zone = json.decode(zones[i])['coordinates'];
 
-                for (int i = 0; i < data[0].length; i++) {
-                  tempCoords.add(LatLng(data[0][i][1], data[0][i][0]));
+                  for (int j = 0; j < zone[0].length; j++) {
+                    if (zone[0][j][1] < minLat) minLat = zone[0][j][1];
+                    if (zone[0][j][1] > maxLat) maxLat = zone[0][j][1];
+
+                    if (zone[0][j][0] < minLong) minLong = zone[0][j][0];
+                    if (zone[0][j][0] > maxLong) maxLong = zone[0][j][0];
+
+                    tempCoords.add(LatLng(zone[0][j][1], zone[0][j][0]));
+                  }
+
+                  if (location.latitude > minLat &&
+                      location.latitude < maxLat &&
+                      location.longitude < maxLong &&
+                      location.longitude > minLong) {
+                    _showEvacuationWarning(context, _serviceWrapper);
+                  }
+
+                  coordinates.add(tempCoords);
+
+                  await controller.addFill(FillOptions(
+                      geometry: coordinates,
+                      draggable: false,
+                      fillColor: "#F08080",
+                      fillOpacity: 0.5,
+                      fillOutlineColor: "#000000"));
                 }
-
-                coordinates.add(tempCoords);
-                await controller.addFill(FillOptions(
-                    geometry: coordinates,
-                    draggable: false,
-                    fillColor: "#00FFFF",
-                    fillOpacity: 0.8,
-                    fillOutlineColor: "#000000"));
-
-                print(_mapController.fills);
               },
               onMapLongClick: (Point<double> point, LatLng coordinates) async {
                 await _mapController.addCircle(CircleOptions(
@@ -106,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
               icon: Icon(Icons.settings),
               onPressed: () async {
-                showSettingsModal(context);
+                showSettingsModal(context, _serviceWrapper);
               }),
         ],
         flexibleSpace: Container(

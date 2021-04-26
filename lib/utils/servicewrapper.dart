@@ -5,7 +5,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 class ServiceWrapper {
   var baseurl = "https://bee-webserver.herokuapp.com";
-  var uuid = "140afcc5-cc8a-453b-98fc-5c851aed4aef";
+  var uuid = "140afcc5-cc8a-453b-98fc-5c851aed4aea";
 
   Future<http.Response> sendSafety(bool isSafe) async {
     var location = await acquireCurrentLocation();
@@ -80,12 +80,81 @@ class ServiceWrapper {
     print(response.body);
 
     return response.body;
-    /*
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to get data');
-    }
-    */
+  }
+
+  Future<String> sendUser(name) async {
+    var uuid = "140afcc5-cc8a-453b-98fc-5c851aed43ef";
+    Map<String, dynamic> locationJSON = {
+      'user_id': uuid,
+      'evac_id': 'null',
+      'notification_token': false,
+      'notification_sent_at': '2021-04-26 10:23:54+02',
+      'acknowledged': false,
+      'acknowledged_at': '2021-04-26 10:23:54+02',
+      'safe': false,
+      'marked_safe_at': '2021-04-26 10:23:54+02',
+      'location': 'null',
+      'location_updated_at': '2021-04-26 10:23:54+02',
+      'name': name
+    };
+
+    var response = await http.post(
+        Uri.encodeFull(baseurl + "/Create_New_User_M"),
+        body: json.encode(locationJSON),
+        headers: {
+          "content-type": "application/json",
+          "Accept": "application/json"
+        });
+
+    print(response.body);
+
+    return response.body;
+  }
+
+  Future<String> acknowledgeNotification() async {
+    var uuid = "140afcc5-cc8a-453b-98fc-5c851aed4aea";
+    Map<String, dynamic> locationJSON = {
+      'user_id': uuid,
+      'evac_id': 'null',
+      'notification_token': false,
+      'notification_sent_at': '2021-04-26 10:23:54+02',
+      'acknowledged': false,
+      'acknowledged_at': '2021-04-26 10:23:54+02',
+      'safe': false,
+      'marked_safe_at': '2021-04-26 10:23:54+02',
+      'location': 'null',
+      'location_updated_at': '2021-04-26 10:23:54+02',
+      'name': 'null'
+    };
+
+    var response = await http.post(
+        Uri.encodeFull(baseurl + "/Acknowledge_Notification"),
+        body: json.encode(locationJSON),
+        headers: {
+          "content-type": "application/json",
+          "Accept": "application/json"
+        });
+
+    print(response.body);
+
+    return response.body;
+  }
+
+  Future<String> getZones() async {
+    final response = await http.get(baseurl + '/Send_Zone');
+
+    return response.body;
+  }
+
+  Future<String> getRoutes() async {
+    final response = await http.get(baseurl + '/Send_Point');
+
+    return response.body;
+  }
+
+  Future<String> getInstructions() async {
+    final response = await http.get(baseurl + '/Send_Instructions');
+
+    return response.body;
   }
 }

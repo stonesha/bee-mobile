@@ -1,6 +1,28 @@
 import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:flutter/material.dart';
 
+class SafeIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      child: new LayoutBuilder(builder: (context, constraint) {
+        return new Icon(Icons.check_circle_outlined, size: 80);
+      }),
+    );
+  }
+}
+
+class NotSafeIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      child: new LayoutBuilder(builder: (context, constraint) {
+        return new Icon(Icons.cancel_sharp, size: 80);
+      }),
+    );
+  }
+}
+
 void showSafetyModal(
     BuildContext context, ServiceWrapper serviceWrapper) async {
   showModalBottomSheet(
@@ -38,7 +60,11 @@ void showSafetyModal(
                           print("green button pressed");
                           serviceWrapper.sendSafety(true);
                         },
-                        child: Text("I am safe."))),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[new SafeIcon(), Text('I am Safe')],
+                        ))),
                 // ignore: deprecated_member_use
                 ButtonTheme(
                     minWidth: 175.0,
@@ -54,7 +80,14 @@ void showSafetyModal(
                           print("red button pressed");
                           serviceWrapper.sendSafety(false);
                         },
-                        child: Text("I am not safe."))),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            new NotSafeIcon(),
+                            Text('I am NOT Safe')
+                          ],
+                        ))),
               ],
             ));
       });

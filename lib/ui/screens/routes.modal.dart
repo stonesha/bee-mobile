@@ -1,29 +1,24 @@
 import 'dart:convert';
 
+import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:flutter/material.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
+Future<void> _onRouteEvent(e) async {
+  switch (e.eventType) {
+    case MapBoxEvent.navigation_finished:
+      print("navigation done");
+      break;
+    default:
+      break;
+  }
+}
 
 void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper,
-    MapboxMapController _mapController) {
-  var response;
-  serviceWrapper.getData().then((value) {
-    response = value;
-  });
-
-  Future<void> _onRouteEvent(e) async {
-    switch (e.eventType) {
-      case MapBoxEvent.navigation_finished:
-        print("navigation done");
-        break;
-      default:
-        break;
-    }
-  }
-
+    MapboxMapController _mapController) async {
   MapBoxNavigation _directions = MapBoxNavigation(onRouteEvent: _onRouteEvent);
 
   MapBoxOptions _options = MapBoxOptions(
@@ -41,52 +36,36 @@ void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper,
       units: VoiceUnits.imperial,
       language: "en");
 
-  print(response);
+  var routes = await serviceWrapper.getRoutes();
+  var location = await acquireCurrentLocation();
+  routes = routes.substring(1);
+  List<String> routesList = routes.split(r"|");
+
+  List<Widget> widgets = [];
+
+  for (int i = 0; i < routesList.length; i++) {
+    var route = json.decode(routesList[i])['coordinates'];
+    List<WayPoint> tempWayPoints = [];
+    tempWayPoints.add(WayPoint(
+        name: "Waypoint {$i}",
+        latitude: location.latitude,
+        longitude: location.longitude));
+    tempWayPoints.add(WayPoint(
+        name: "Waypoint {$i}", latitude: route[1], longitude: route[0]));
+
+    var num = i + 1;
+    widgets.add(ListTile(
+        leading: Icon(Icons.run_circle),
+        title: Text('Evacuation Route $num'),
+        onTap: () async {
+          await _directions.startNavigation(
+              wayPoints: tempWayPoints, options: _options);
+        }));
+  }
 
   showModalBottomSheet(
       context: context,
       builder: (context) {
-        return Column(children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.run_circle),
-            title: Text('Evacuation Route 1'),
-            onTap: () async {
-              print('route 1 pressed');
-              String jsonString =
-                  await rootBundle.loadString('assets/test_linestring.json');
-              final data = json.decode(jsonString);
-              List<LatLng> coordinates = [];
-              List<WayPoint> wayPoints = [];
-              for (var i = 0; i < data['coordinates'].length; i++) {
-                coordinates.add(LatLng(
-                    data['coordinates'][i][1], data['coordinates'][i][0]));
-
-                wayPoints.add(WayPoint(
-                    name: "Waypoint {$i}",
-                    latitude: data['coordinates'][i][1],
-                    longitude: data['coordinates'][i][0]));
-              }
-              var lineOptions = new LineOptions(
-                  geometry: coordinates,
-                  lineColor: "#000000",
-                  lineWidth: 14.0,
-                  lineOpacity: 1.0);
-
-              await _mapController.addLine(lineOptions);
-              await _directions.startNavigation(
-                  wayPoints: wayPoints, options: _options);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.run_circle),
-            title: Text('Evacuation Route 2'),
-            onTap: () => print('route pressed'),
-          ),
-          ListTile(
-            leading: Icon(Icons.run_circle),
-            title: Text('Evacuation Route 3'),
-            onTap: () => print('route pressed'),
-          ),
-        ]);
+        return Column(children: widgets);
       });
 }
