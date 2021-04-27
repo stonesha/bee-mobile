@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:bee_mobile/utils/location.helper.dart';
 import 'package:flutter/material.dart';
 import 'package:bee_mobile/utils/servicewrapper.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
