@@ -1,6 +1,7 @@
 import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:flutter/material.dart';
 
+//widget overloads to make icons bigger and stay within container constraints
 class SafeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class SafeIcon extends StatelessWidget {
   }
 }
 
+//widget overloads to make icons bigger and stay within container constraints
 class NotSafeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class NotSafeIcon extends StatelessWidget {
   }
 }
 
+//formats and displays two big buttons, one to confirm safety and send to webserver, one that say's theyre not safe
 void showSafetyModal(
     BuildContext context, ServiceWrapper serviceWrapper) async {
   showModalBottomSheet(

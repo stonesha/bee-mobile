@@ -6,6 +6,7 @@ import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
+//Function for navigation events
 Future<void> _onRouteEvent(e) async {
   switch (e.eventType) {
     case MapBoxEvent.navigation_finished:
@@ -35,6 +36,7 @@ void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper,
       units: VoiceUnits.imperial,
       language: "en");
 
+  //get list of routes from server
   var routes = await serviceWrapper.getRoutes();
   var location = await acquireCurrentLocation();
   routes = routes.substring(1);
@@ -42,6 +44,7 @@ void showRoutesModal(BuildContext context, ServiceWrapper serviceWrapper,
 
   List<Widget> widgets = [];
 
+  //build routes and add them to a tile list for user to tap on
   for (int i = 0; i < routesList.length; i++) {
     var route = json.decode(routesList[i])['coordinates'];
     List<WayPoint> tempWayPoints = [];

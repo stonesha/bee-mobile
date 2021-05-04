@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _serviceWrapper = new ServiceWrapper();
   MapboxMapController _mapController;
 
+  //popup alert for evacuation instructions received from web server
   _showEvacuationInstructions(context, _serviceWrapper) async {
     var instructionsJson = await _serviceWrapper.getInstructions();
     var instructions = json.decode(instructionsJson);
@@ -52,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ).show();
   }
 
+  //popup for evacuation warning if user is detected in an evacuation zone from server
   _showEvacuationWarning(context, _serviceWrapper) {
     Alert(
       context: context,
@@ -75,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ).show();
   }
 
+  //popup for making a report of a hazard
   _makeReportAlert(context, _serviceWrapper, coordinates) {
     String info = "";
     Alert(
@@ -110,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
+        //load environment variables
         future: loadConfigFile(),
         builder: (
           BuildContext buildContext,
@@ -119,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return MapboxMap(
               accessToken: snapshot.data['mapbox_api_token'],
               initialCameraPosition: CameraPosition(
+                //default camera position, only if user doesn't accept location permissions
                 target: LatLng(39.52766, -119.81353),
               ),
               onMapCreated: (MapboxMapController controller) async {
@@ -127,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final location = await acquireCurrentLocation();
                 _serviceWrapper.sendUser();
 
-                //either moveCamera or animateCamera, animateCamera is smoother doe
+                //either moveCamera or animateCamera, animateCamera is smoother though
                 await controller.animateCamera(
                   CameraUpdate.newCameraPosition(
                     CameraPosition(
@@ -146,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   draggable: false,
                 ));
 
+                //get list of designated evacuation zones from web server
                 var zonesJSON = await _serviceWrapper.getZones();
                 zonesJSON = zonesJSON.substring(1);
                 List<String> zones = zonesJSON.split(r"|");
@@ -153,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 double maxLong = double.negativeInfinity;
                 double minLat = double.infinity;
                 double maxLat = double.negativeInfinity;
+                //parse through and determine if user is in any of the zones
                 for (int i = 0; i < zones.length; i++) {
                   List<LatLng> tempCoords = [];
                   List<List<LatLng>> coordinates = [];
@@ -176,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   coordinates.add(tempCoords);
-
+                  //draw each zone received on the map
                   await controller.addFill(FillOptions(
                       geometry: coordinates,
                       draggable: false,
@@ -185,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fillOutlineColor: "#000000"));
                 }
               },
+              //if user long taps/holds on map then dislay a red dot and make a report
               onMapLongClick: (Point<double> point, LatLng coordinates) async {
                 await _mapController.addCircle(CircleOptions(
                   circleRadius: 8.0,
@@ -198,16 +206,19 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else {
             return Center(
+              //if map isn't loading in the mean time display a progress indicator
               child: CircularProgressIndicator(),
             );
           }
         },
       ),
+      //top nav bar
       appBar: AppBar(
         centerTitle: true,
         title: Text("BEE Mobile"),
         actions: <Widget>[
           IconButton(
+              //gear icon, when pressed show settings modal
               icon: Icon(Icons.settings),
               onPressed: () async {
                 showSettingsModal(context, _serviceWrapper);
@@ -220,6 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     end: Alignment.bottomRight,
                     colors: <Color>[Color(0xFF00AFB5), Color(0xFF102E4A)]))),
       ),
+      //button in bottom left to send/display user location
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.my_location),
         backgroundColor: Color(0xFFE3B505),
@@ -236,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _serviceWrapper.sendLocation();
         },
       ),
+      //bottom navbar, pretty self explanatory
       bottomNavigationBar: ConvexAppBar(
           style: TabStyle.fixed,
           items: [
@@ -246,6 +259,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Safety'),
           ],
           initialActiveIndex: 1, //optional, default as 0
+          //when 1st button is pressed show routes modal
+          //when third button is pressed show confirm safety modal
           onTap: (int i) {
             if (i == 0) {
               showRoutesModal(context, _serviceWrapper, _mapController);

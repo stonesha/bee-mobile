@@ -2,6 +2,7 @@ import 'package:bee_mobile/utils/servicewrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+//shows settings modal, only option is to change your name which is then sent to the server
 void showSettingsModal(BuildContext context, ServiceWrapper _serviceWrapper) {
   var name;
 
